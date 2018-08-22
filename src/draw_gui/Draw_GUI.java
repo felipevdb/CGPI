@@ -1,6 +1,7 @@
 package draw_gui;
 
 import draw_tools.Dot_Gr;
+import draw_tools.Draw_Edge;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -18,6 +19,10 @@ import javafx.stage.Stage;
 
 public class Draw_GUI {
 	int indicePonto = 1;
+	int indiceReta = 1;
+	int distancia;
+	int[] ponto1= new int[2];
+	int[] ponto2= new int[2];
 
 	public Draw_GUI(Stage stage) {
 
@@ -77,18 +82,36 @@ public class Draw_GUI {
 				// dot tool
 				if (tool.tooloption == 0) {
 					System.out.println("teste botao ponto");
+					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
+					indicePonto++;
 				}
 				// edge tool
 				if (tool.tooloption == 1) {
+					
+					Draw_Edge linha = new Draw_Edge();
+					
 					System.out.println("teste botao linha");
+					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
+					if(indiceReta%2 == 0) {
+						ponto2[0] = x;
+						ponto2[1] = y;
+						System.out.println("p2");
+						linha.desenharLinha(ponto1,ponto2,gc);
+					}
+					else {
+						ponto1[0] = x;
+						ponto1[1] = y;
+						System.out.println("p1");
+					}
+					indiceReta++;
+					indicePonto++;
 				}
 				// circle tool
 				if (tool.tooloption == 2) {
 					System.out.println("teste botao circulo");
+					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
+					indicePonto++;
 				}
-				// desenha ponto na posicao clicada
-				desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
-				indicePonto++;
 			}
 		});
 
@@ -136,4 +159,5 @@ public class Draw_GUI {
 		// Desenha o ponto
 		p.desenharPonto(g);
 	}
+	
 }
