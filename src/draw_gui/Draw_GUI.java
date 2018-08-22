@@ -1,6 +1,7 @@
 package draw_gui;
 
 import draw_tools.Dot_Gr;
+import draw_tools.Draw_Circle;
 import draw_tools.Draw_Edge;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 public class Draw_GUI {
 	int indicePonto = 1;
 	int indiceReta = 1;
+	int indiceCirculo = 1;
 	int distancia;
 	int[] ponto1= new int[2];
 	int[] ponto2= new int[2];
@@ -90,7 +92,6 @@ public class Draw_GUI {
 					
 					Draw_Edge linha = new Draw_Edge();
 					
-					System.out.println("teste botao linha");
 					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
 					if(indiceReta%2 == 0) {
 						ponto2[0] = x;
@@ -108,8 +109,22 @@ public class Draw_GUI {
 				}
 				// circle tool
 				if (tool.tooloption == 2) {
-					System.out.println("teste botao circulo");
+					
+					Draw_Circle circulo = new Draw_Circle();
+					
 					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
+					if(indiceCirculo%2 == 0) {
+						ponto2[0] = x;
+						ponto2[1] = y;
+						System.out.println("p2");
+						circulo.desenharCirculo(ponto1,ponto2,gc);
+					}
+					else {
+						ponto1[0] = x;
+						ponto1[1] = y;
+						System.out.println("p1");
+					}
+					indiceCirculo++;
 					indicePonto++;
 				}
 			}
