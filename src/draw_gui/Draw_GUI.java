@@ -9,6 +9,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -23,8 +26,8 @@ public class Draw_GUI {
 	int indiceReta = 1;
 	int indiceCirculo = 1;
 	int distancia;
-	int[] ponto1= new int[2];
-	int[] ponto2= new int[2];
+	int[] ponto1 = new int[2];
+	int[] ponto2 = new int[2];
 
 	public Draw_GUI(Stage stage) {
 
@@ -37,11 +40,21 @@ public class Draw_GUI {
 
 		Tools tool = new Tools();
 		int ntools = 3;
+
+		// tools
 		Button[] tools = new Button[10];
 		tools = createBtnTools(tools, ntools);
 		tools[0].setText("*");
 		tools[1].setText("|");
 		tools[2].setText("o");
+
+		// size
+		final Spinner<Integer> sizeSpinner = new Spinner<Integer>();
+		sizeSpinner.setId("sizeSpinner");
+		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 8, 4);
+		sizeSpinner.setValueFactory(valueFactory);
+
+		// color
 		ColorPicker colorPicker = new ColorPicker();
 		colorPicker.setValue(Color.CORAL);
 
@@ -81,57 +94,46 @@ public class Draw_GUI {
 			if (event.getButton() == MouseButton.PRIMARY) {
 				x = (int) event.getX();
 				y = (int) event.getY();
-				// dot tool
-				if (tool.tooloption == 0) {
-					System.out.println("teste botao ponto");
-					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
+				// trata açoes das tools
+				switch (tool.tooloption) {
+				case 0:// dot
+					desenharPonto(gc, x, y, sizeSpinner.getValue(), "P" + indicePonto, colorPicker.getValue());
 					indicePonto++;
-				}
-				// edge tool
-				if (tool.tooloption == 1) {
-					
+					break;
+				case 1:// edge
 					Draw_Edge linha = new Draw_Edge();
-					
-					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
-					if(indiceReta%2 == 0) {
+					desenharPonto(gc, x, y, sizeSpinner.getValue(), "P" + indicePonto, colorPicker.getValue());
+					if (indiceReta % 2 == 0) { // segundo ponto
 						ponto2[0] = x;
 						ponto2[1] = y;
-						System.out.println("p2");
-						linha.desenharLinha(ponto1,ponto2,gc);
-					}
-					else {
+						linha.desenharLinha(ponto1, ponto2, gc, colorPicker.getValue(), sizeSpinner.getValue());
+					} else {
 						ponto1[0] = x;
 						ponto1[1] = y;
-						System.out.println("p1");
 					}
 					indiceReta++;
 					indicePonto++;
-				}
-				// circle tool
-				if (tool.tooloption == 2) {
-					
+					break;
+				case 2:// circle
 					Draw_Circle circulo = new Draw_Circle();
-					
-					desenharPonto(gc, x, y, 6, "P" + indicePonto, colorPicker.getValue());
-					if(indiceCirculo%2 == 0) {
+					desenharPonto(gc, x, y, sizeSpinner.getValue(), "P" + indicePonto, colorPicker.getValue());
+					if (indiceCirculo % 2 == 0) {
 						ponto2[0] = x;
 						ponto2[1] = y;
-						System.out.println("p2");
-						circulo.desenharCirculo(ponto1,ponto2,gc);
-					}
-					else {
+						circulo.desenharCirculo(ponto1, ponto2, gc, colorPicker.getValue(), sizeSpinner.getValue());
+					} else {
 						ponto1[0] = x;
 						ponto1[1] = y;
-						System.out.println("p1");
 					}
 					indiceCirculo++;
 					indicePonto++;
+					break;
 				}
 			}
 		});
 
 		// atributos do painel
-		menu.getChildren().addAll(tools[0], tools[1], tools[2], colorPicker);
+		menu.getChildren().addAll(tools[0], tools[1], tools[2], colorPicker, sizeSpinner);
 		pane.setTop(menu);
 		pane.setCenter(canvas); // posiciona o componente de desenho
 
@@ -174,5 +176,5 @@ public class Draw_GUI {
 		// Desenha o ponto
 		p.desenharPonto(g);
 	}
-	
+
 }

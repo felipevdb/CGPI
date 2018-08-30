@@ -1,3 +1,7 @@
 .menutools {
 	-fx-background-color: #808080;
 }
+
+#sizeSpinner {
+	-fx-max-width: 60;
+}
