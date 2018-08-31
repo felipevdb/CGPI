@@ -5,10 +5,10 @@ public class Tools {
 
 	public void setTool(String option) {
 		switch (option) {
-		case "*": //dot
+		case "\u2022": //dot
 			tooloption = 0;
 			break;
-		case "|": //line
+		case "/": //line
 			tooloption = 1;
 			break;
 		case "o": //circle
@@ -20,7 +20,9 @@ public class Tools {
 		case "\u25B3": //triangle
 			tooloption = 4;
 			break;
-		
+		case "\u2606": //snowflake
+			tooloption = 5;
+			break;
 		}
 	}
 

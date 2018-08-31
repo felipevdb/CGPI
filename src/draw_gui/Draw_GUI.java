@@ -39,17 +39,18 @@ public class Draw_GUI {
 		menu.setBackground(new Background(new BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
 		Tools tool = new Tools();
-		int ntools = 5;
+		int ntools = 6;
 
 		// tools
 		Button[] tools = new Button[10];
 		tools = createBtnTools(tools, ntools);
-		tools[0].setText("*");
-		tools[1].setText("|");
-		tools[2].setText("o");
-		tools[3].setText("\u25A1"); //Square
-		tools[4].setText("\u25B3"); //Triangle
-		
+		tools[0].setText("\u2022"); // Dot
+		tools[1].setText("/"); // Line
+		tools[2].setText("o"); // Circle
+		tools[3].setText("\u25A1"); // Square
+		tools[4].setText("\u25B3"); // Triangle
+		tools[5].setText("\u2606"); // SnowFlake
+
 		// size
 		final Spinner<Integer> sizeSpinner = new Spinner<Integer>();
 		sizeSpinner.setId("sizeSpinner");
@@ -60,30 +61,31 @@ public class Draw_GUI {
 		ColorPicker colorPicker = new ColorPicker();
 		colorPicker.setValue(Color.CORAL);
 
-		// attach style css
-		menu.getStyleClass().add("menutools");
-
 		// define largura e altura da janela
-		stage.setWidth(500);
-		stage.setHeight(500);
+		stage.setMaximized(true);
 
 		// Painel para os componentes
 		BorderPane pane = new BorderPane();
 
 		// componente para desenho
-		Canvas canvas = new Canvas(500, 500);
+		Canvas canvas = new Canvas(1200, 612);
 
 		// componente para desenhar graficos
 		GraphicsContext gc;
 		gc = canvas.getGraphicsContext2D();
+		changeCanvasColor(gc, canvas, Color.WHITE);
 
 		// clean
 		Button clear = new Button();
 		clear.setText("clear");
 		clear.setOnAction(event -> {
 			gc.clearRect(0, 0, stage.getWidth(), stage.getHeight());
+			changeCanvasColor(gc, canvas, Color.WHITE);
 		});
-		
+
+		// attach style css
+		menu.getStyleClass().add("menutools");
+		pane.getStyleClass().add("paneclass");
 
 		// Escolha da Tool
 		for (int i = 0; i < ntools; i++) {
@@ -143,7 +145,7 @@ public class Draw_GUI {
 		});
 
 		// atributos do painel
-		menu.getChildren().addAll(tools[0], tools[1], tools[2], tools[3], tools[4], colorPicker, sizeSpinner, clear);
+		menu.getChildren().addAll(tools[0], tools[1], tools[2], tools[3], tools[4], tools[5], colorPicker, sizeSpinner, clear);
 		pane.setTop(menu);
 		pane.setCenter(canvas); // posiciona o componente de desenho
 
@@ -152,6 +154,11 @@ public class Draw_GUI {
 		scene.getStylesheets().add("myStyle.css");
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	private void changeCanvasColor(GraphicsContext gc, Canvas canvas, Color color) {
+		gc.setFill(color);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
 
 	private Button[] createBtnTools(Button[] tools, int number) {
