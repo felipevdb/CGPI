@@ -5,15 +5,22 @@ public class Tools {
 
 	public void setTool(String option) {
 		switch (option) {
-		case "*":
+		case "*": //dot
 			tooloption = 0;
 			break;
-		case "|":
+		case "|": //line
 			tooloption = 1;
 			break;
-		case "o":
+		case "o": //circle
 			tooloption = 2;
 			break;
+		case "\u25A1": //square
+			tooloption = 3;
+			break;
+		case "\u25B3": //triangle
+			tooloption = 4;
+			break;
+		
 		}
 	}
 

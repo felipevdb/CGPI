@@ -39,7 +39,7 @@ public class Draw_GUI {
 		menu.setBackground(new Background(new BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
 		Tools tool = new Tools();
-		int ntools = 3;
+		int ntools = 5;
 
 		// tools
 		Button[] tools = new Button[10];
@@ -47,7 +47,9 @@ public class Draw_GUI {
 		tools[0].setText("*");
 		tools[1].setText("|");
 		tools[2].setText("o");
-
+		tools[3].setText("\u25A1"); //Square
+		tools[4].setText("\u25B3"); //Triangle
+		
 		// size
 		final Spinner<Integer> sizeSpinner = new Spinner<Integer>();
 		sizeSpinner.setId("sizeSpinner");
@@ -74,6 +76,14 @@ public class Draw_GUI {
 		// componente para desenhar graficos
 		GraphicsContext gc;
 		gc = canvas.getGraphicsContext2D();
+
+		// clean
+		Button clear = new Button();
+		clear.setText("clear");
+		clear.setOnAction(event -> {
+			gc.clearRect(0, 0, stage.getWidth(), stage.getHeight());
+		});
+		
 
 		// Escolha da Tool
 		for (int i = 0; i < ntools; i++) {
@@ -133,7 +143,7 @@ public class Draw_GUI {
 		});
 
 		// atributos do painel
-		menu.getChildren().addAll(tools[0], tools[1], tools[2], colorPicker, sizeSpinner);
+		menu.getChildren().addAll(tools[0], tools[1], tools[2], tools[3], tools[4], colorPicker, sizeSpinner, clear);
 		pane.setTop(menu);
 		pane.setCenter(canvas); // posiciona o componente de desenho
 
