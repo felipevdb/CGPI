@@ -3,25 +3,22 @@ package draw_gui;
 import draw_tools.Dot_Gr;
 import draw_tools.Draw_Circle;
 import draw_tools.Draw_Edge;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Draw_GUI {
+	// menu box
+	HBox menu = new HBox();
+	// componente para desenho
+	Canvas canvas = new Canvas(1200, 612);
+	// componente para desenhar graficos
+	GraphicsContext gc;
 	int indicePonto = 1;
 	int indiceReta = 1;
 	int indiceCirculo = 1;
@@ -31,69 +28,20 @@ public class Draw_GUI {
 
 	public Draw_GUI(Stage stage) {
 
-		// define titulo da janela
 		stage.setTitle("CGPI - Drawing");
-
-		// define menu de tools
-		HBox menu = new HBox();
-		menu.setBackground(new Background(new BackgroundFill(Color.DIMGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-
-		Tools tool = new Tools();
-		int ntools = 6;
-
-		// tools
-		Button[] tools = new Button[10];
-		tools = createBtnTools(tools, ntools);
-		tools[0].setText("\u2022"); // Dot
-		tools[1].setText("/"); // Line
-		tools[2].setText("o"); // Circle
-		tools[3].setText("\u25A1"); // Square
-		tools[4].setText("\u25B3"); // Triangle
-		tools[5].setText("\u2606"); // SnowFlake
-
-		// size
-		final Spinner<Integer> sizeSpinner = new Spinner<Integer>();
-		sizeSpinner.setId("sizeSpinner");
-		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 8, 4);
-		sizeSpinner.setValueFactory(valueFactory);
-
-		// color
-		ColorPicker colorPicker = new ColorPicker();
-		colorPicker.setValue(Color.CORAL);
-
-		// define largura e altura da janela
+		GUI_Menu gui_menu = new GUI_Menu(this, stage); // define menu de tools
 		stage.setMaximized(true);
 
-		// Painel para os componentes
-		BorderPane pane = new BorderPane();
+		BorderPane pane = new BorderPane(); // Painel para os componentes
 
-		// componente para desenho
-		Canvas canvas = new Canvas(1200, 612);
-
-		// componente para desenhar graficos
-		GraphicsContext gc;
-		gc = canvas.getGraphicsContext2D();
+		gc = canvas.getGraphicsContext2D(); // canvas
 		changeCanvasColor(gc, canvas, Color.WHITE);
 
-		// clean
-		Button clear = new Button();
-		clear.setText("clear");
-		clear.setOnAction(event -> {
-			gc.clearRect(0, 0, stage.getWidth(), stage.getHeight());
-			changeCanvasColor(gc, canvas, Color.WHITE);
-		});
-
-		// attach style css
-		menu.getStyleClass().add("menutools");
+		menu.getStyleClass().add("menutools"); // attach style css
 		pane.getStyleClass().add("paneclass");
+		pane.setTop(menu);
+		pane.setCenter(canvas); // posiciona o componente de desenho
 
-		// Escolha da Tool
-		for (int i = 0; i < ntools; i++) {
-			String option = tools[i].getText();
-			tools[i].setOnAction(event -> tool.setTool(option));
-		}
-
-		// Eventos de mouse
 		// trata mouseMoved
 		canvas.setOnMouseMoved(event -> {
 			stage.setTitle("CGPI - Drawing:" + " (" + (int) event.getX() + ", " + (int) event.getY() + ")");
@@ -106,19 +54,20 @@ public class Draw_GUI {
 			if (event.getButton() == MouseButton.PRIMARY) {
 				x = (int) event.getX();
 				y = (int) event.getY();
-				// trata açoes das tools
-				switch (tool.tooloption) {
+				// trata acoes das tools
+				switch (gui_menu.tooloption) {
 				case 0:// dot
-					desenharPonto(gc, x, y, sizeSpinner.getValue(), "P" + indicePonto, colorPicker.getValue());
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
 					indicePonto++;
 					break;
 				case 1:// edge
 					Draw_Edge linha = new Draw_Edge();
-					desenharPonto(gc, x, y, sizeSpinner.getValue(), "P" + indicePonto, colorPicker.getValue());
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
 					if (indiceReta % 2 == 0) { // segundo ponto
 						ponto2[0] = x;
 						ponto2[1] = y;
-						linha.desenharLinha(ponto1, ponto2, gc, colorPicker.getValue(), sizeSpinner.getValue());
+						linha.desenharLinha(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
 					} else {
 						ponto1[0] = x;
 						ponto1[1] = y;
@@ -128,11 +77,12 @@ public class Draw_GUI {
 					break;
 				case 2:// circle
 					Draw_Circle circulo = new Draw_Circle();
-					desenharPonto(gc, x, y, sizeSpinner.getValue(), "P" + indicePonto, colorPicker.getValue());
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
 					if (indiceCirculo % 2 == 0) {
 						ponto2[0] = x;
 						ponto2[1] = y;
-						circulo.desenharCirculo(ponto1, ponto2, gc, colorPicker.getValue(), sizeSpinner.getValue());
+						circulo.desenharCirculo(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
 					} else {
 						ponto1[0] = x;
 						ponto1[1] = y;
@@ -144,11 +94,6 @@ public class Draw_GUI {
 			}
 		});
 
-		// atributos do painel
-		menu.getChildren().addAll(tools[0], tools[1], tools[2], tools[3], tools[4], tools[5], colorPicker, sizeSpinner, clear);
-		pane.setTop(menu);
-		pane.setCenter(canvas); // posiciona o componente de desenho
-
 		// cria e insere cena
 		Scene scene = new Scene(pane);
 		scene.getStylesheets().add("myStyle.css");
@@ -156,34 +101,11 @@ public class Draw_GUI {
 		stage.show();
 	}
 
-	private void changeCanvasColor(GraphicsContext gc, Canvas canvas, Color color) {
+	public void changeCanvasColor(GraphicsContext gc, Canvas canvas, Color color) {
 		gc.setFill(color);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
 
-	private Button[] createBtnTools(Button[] tools, int number) {
-		for (int i = 0; i < number; i++) {
-			tools[i] = new Button();
-		}
-		return tools;
-	}
-
-	/**
-	 * Desenha um ponto grafico
-	 * 
-	 * @param g
-	 *            contexto grafico
-	 * @param x
-	 *            posicao x
-	 * @param y
-	 *            posicao y
-	 * @param diametro
-	 *            diametro do ponto
-	 * @param nome
-	 *            nome do ponto
-	 * @param cor
-	 *            cor do ponto
-	 */
 	public void desenharPonto(GraphicsContext g, int x, int y, int diametro, String nome, Color cor) {
 		Dot_Gr p;
 
