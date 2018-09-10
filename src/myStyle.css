@@ -2,6 +2,10 @@
 	-fx-background-color: #808080;
 }
 
+.paneclass {
+	-fx-background-color: #bbbbbb;
+}
+
 #sizeSpinner {
 	-fx-max-width: 60;
 }
