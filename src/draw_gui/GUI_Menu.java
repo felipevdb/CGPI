@@ -29,7 +29,7 @@ public class GUI_Menu {
 		tools[2].setText("o"); // Circle
 		tools[3].setText("\u25A1"); // Square
 		tools[4].setText("\u25B3"); // Triangle
-		tools[5].setText("\u2606"); // SnowFlake
+		tools[5].setText("\u2744"); // SnowFlake
 
 		// size
 		sizeSpinner.setId("sizeSpinner");
@@ -75,7 +75,7 @@ public class GUI_Menu {
 				case "\u25B3": // triangle
 					tooloption = 4;
 					break;
-				case "\u2606": // snowflake
+				case "\u2744": // snowflake
 					tooloption = 5;
 					break;
 				}
