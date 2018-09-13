@@ -5,7 +5,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * @author Bruno/Gabriel/Guilherme/Felipe
+ * @author Bruno/Felipe/Gabriel/Guilherme
  */
 
 public class Draw_Application extends Application{

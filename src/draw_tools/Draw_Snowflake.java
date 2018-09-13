@@ -46,12 +46,11 @@ public class Draw_Snowflake {
 		}
 	}
 
-	public void run(GraphicsContext gc, Canvas canvas) {
+	public void run(GraphicsContext gc, Canvas canvas, int level) {
 		int width = (int)canvas.getWidth()-400;
 		int height = (int)canvas.getHeight()+250;
 		double x = width / 2;
 		double y = height / 2;
-		int level = 6;
 		double length = 400;
 		double direction = 0;
 

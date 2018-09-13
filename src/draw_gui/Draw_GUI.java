@@ -4,6 +4,7 @@ import draw_tools.Dot_Gr;
 import draw_tools.Draw_Circle;
 import draw_tools.Draw_Edge;
 import draw_tools.Draw_Snowflake;
+import draw_tools.Draw_Triangle;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,9 +24,11 @@ public class Draw_GUI {
 	int indicePonto = 1;
 	int indiceReta = 1;
 	int indiceCirculo = 1;
+	int indiceTriangulo = 1;
 	int distancia;
 	int[] ponto1 = new int[2];
 	int[] ponto2 = new int[2];
+	int[] ponto3 = new int[2];
 
 	public Draw_GUI(Stage stage) {
 
@@ -91,9 +94,30 @@ public class Draw_GUI {
 					indiceCirculo++;
 					indicePonto++;
 					break;
+					
+				case 4:
+					Draw_Triangle triangulo = new Draw_Triangle();
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());					
+					if (indiceTriangulo % 3 == 0) {
+						ponto3[0] = x;
+						ponto3[1] = y;
+						triangulo.desenharTriangulo(ponto1, ponto2, ponto3, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
+					}
+					else if (indiceTriangulo % 3 == 1) {
+						ponto2[0] = x;
+						ponto2[1] = y;
+					}
+					else {
+						ponto1[0] = x;
+						ponto1[1] = y;
+					}
+					indiceTriangulo++;
+					indicePonto++;
+					break;
 				case 5:// snowflake
 					Draw_Snowflake fractal = new Draw_Snowflake();
-					fractal.run(gc, canvas);
+					fractal.run(gc, canvas, gui_menu.sizeSpinner.getValue());
 					/*int width = (int) canvas.getHeight();
 					int height = (int) canvas.getWidth();
 					double x1 = width / 2;
