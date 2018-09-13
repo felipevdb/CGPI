@@ -3,6 +3,7 @@ package draw_gui;
 import draw_tools.Dot_Gr;
 import draw_tools.Draw_Circle;
 import draw_tools.Draw_Edge;
+import draw_tools.Draw_Snowflake;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -89,6 +90,25 @@ public class Draw_GUI {
 					}
 					indiceCirculo++;
 					indicePonto++;
+					break;
+				case 5:// snowflake
+					Draw_Snowflake fractal = new Draw_Snowflake();
+					fractal.run(gc, canvas);
+					/*int width = (int) canvas.getHeight();
+					int height = (int) canvas.getWidth();
+					double x1 = width / 2;
+					double y1 = height / 2;
+					int level = 5;
+					double length = 500;
+					double direction = 0;
+					
+					for (int i = 0; i < 3; i++) {
+						Draw_Snowflake fractal = new Draw_Snowflake();
+						fractal.drawFractal(x1, y1, direction, length, level);
+						x1 = x1 + length * Math.cos(direction);
+						y1 = y1 + length * Math.sin(direction);
+						direction -= (Math.toRadians(120));
+					}*/
 					break;
 				}
 			}
