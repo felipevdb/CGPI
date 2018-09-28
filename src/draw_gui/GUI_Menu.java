@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class GUI_Menu {
-	int ntools = 6;
+	int ntools = 8;
 	int tooloption = 0;
 	Button[] tools = new Button[ntools];
 	final Spinner<Integer> sizeSpinner = new Spinner<Integer>();
@@ -29,7 +29,9 @@ public class GUI_Menu {
 		tools[2].setText("o"); // Circle
 		tools[3].setText("\u25A1"); // Square
 		tools[4].setText("\u25B3"); // Triangle
-		tools[5].setText("\u2744"); // SnowFlake
+		tools[5].setText("\u2B1F"); // Close_Polygon
+		tools[6].setText("\u2B20"); // Open_Polygon
+		tools[7].setText("\u2744");// SnowFlake
 
 		// size
 		sizeSpinner.setId("sizeSpinner");
@@ -50,7 +52,7 @@ public class GUI_Menu {
 		int tooloption = toolOptionListener(tools);
 
 		// atributos do painel
-		drawgui.menu.getChildren().addAll(tools[0], tools[1], tools[2], tools[3], tools[4], tools[5], colorPicker,
+		drawgui.menu.getChildren().addAll(tools[0], tools[1], tools[2], tools[3], tools[4], tools[5], tools[6], tools[7], colorPicker,
 				sizeSpinner, clear);
 
 	}
@@ -75,8 +77,14 @@ public class GUI_Menu {
 				case "\u25B3": // triangle
 					tooloption = 4;
 					break;
-				case "\u2744": // snowflake
+				case "\u2B1F": // close_polygon
 					tooloption = 5;
+					break;
+				case "\u2B20": // close_polygon
+					tooloption = 6;
+					break;
+				case "\u2744": // snowflake
+					tooloption = 7;
 					break;
 				}
 			});

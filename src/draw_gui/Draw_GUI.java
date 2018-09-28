@@ -3,6 +3,8 @@ package draw_gui;
 import draw_tools.Dot_Gr;
 import draw_tools.Draw_Circle;
 import draw_tools.Draw_Edge;
+import draw_tools.Draw_Polygon;
+import draw_tools.Draw_Rectangle;
 import draw_tools.Draw_Snowflake;
 import draw_tools.Draw_Triangle;
 import javafx.scene.Scene;
@@ -21,6 +23,7 @@ public class Draw_GUI {
 	Canvas canvas = new Canvas(1200, 612);
 	// componente para desenhar graficos
 	GraphicsContext gc;
+	int indicePoligono = 0;
 	int indicePonto = 1;
 	int indiceReta = 1;
 	int indiceCirculo = 1;
@@ -29,6 +32,7 @@ public class Draw_GUI {
 	int[] ponto1 = new int[2];
 	int[] ponto2 = new int[2];
 	int[] ponto3 = new int[2];
+	int[][] pontos = new int[20][20];
 
 	public Draw_GUI(Stage stage) {
 
@@ -54,6 +58,8 @@ public class Draw_GUI {
 		// trata mousePressed
 		canvas.setOnMousePressed(event -> {
 			int x, y;
+			int stop = 0;
+			Draw_Polygon poligono = new Draw_Polygon();
 
 			if (event.getButton() == MouseButton.PRIMARY) {
 				x = (int) event.getX();
@@ -94,9 +100,25 @@ public class Draw_GUI {
 					indiceCirculo++;
 					indicePonto++;
 					break;
+				case 3:
 					
+					Draw_Rectangle retangulo = new Draw_Rectangle();
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+					if (indiceCirculo % 2 == 0) {
+						ponto2[0] = x;
+						ponto2[1] = y;
+						retangulo.desenharRetangulo(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
+					} else {
+						ponto1[0] = x;
+						ponto1[1] = y;
+					}
+					indiceCirculo++;
+					indicePonto++;
+					break;	
 				case 4:
 					Draw_Triangle triangulo = new Draw_Triangle();
+					Draw_Edge linhaTri = new Draw_Edge();
 					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());					
 					if (indiceTriangulo % 3 == 0) {
 						ponto3[0] = x;
@@ -107,15 +129,50 @@ public class Draw_GUI {
 					else if (indiceTriangulo % 3 == 1) {
 						ponto2[0] = x;
 						ponto2[1] = y;
+						
 					}
 					else {
 						ponto1[0] = x;
 						ponto1[1] = y;
+						linhaTri.desenharLinha(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
 					}
 					indiceTriangulo++;
 					indicePonto++;
 					break;
-				case 5:// snowflake
+				case 5: // polygon
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+					pontos[indicePoligono][0] = x ;
+					pontos[indicePoligono][1]= y ;
+					if(indicePoligono > 0) {
+						ponto1[0] = pontos[indicePoligono - 1][0];
+						ponto1[1] = pontos[indicePoligono - 1][1];
+						ponto2[0] = pontos[indicePoligono][0];
+						ponto2[1] = pontos[indicePoligono][1];
+						Draw_Edge linhaPol = new Draw_Edge();
+						linhaPol.desenharLinha(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
+					}
+					indicePoligono++;
+					indicePonto++;
+					break;
+				case 6:
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+					pontos[indicePoligono][0] = x ;
+					pontos[indicePoligono][1]= y ;	
+					if(indicePoligono > 0) {
+						ponto1[0] = pontos[indicePoligono - 1][0];
+						ponto1[1] = pontos[indicePoligono - 1][1];
+						ponto2[0] = pontos[indicePoligono][0];
+						ponto2[1] = pontos[indicePoligono][1];
+						Draw_Edge linhaPol = new Draw_Edge();
+						linhaPol.desenharLinha(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
+					}
+					indicePoligono++;
+					indicePonto++;
+					break;
+				case 7:// snowflake
 					Draw_Snowflake fractal = new Draw_Snowflake();
 					fractal.run(gc, canvas, gui_menu.sizeSpinner.getValue());
 					/*int width = (int) canvas.getHeight();
@@ -136,7 +193,42 @@ public class Draw_GUI {
 					break;
 				}
 			}
+			if (event.getButton() == MouseButton.SECONDARY) {
+				switch (gui_menu.tooloption) {
+				case 5:
+					x = (int) event.getX();
+					y = (int) event.getY();
+					if(indicePoligono == 0) {
+						desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+					}
+					else {
+						desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+						pontos[indicePoligono][0] = x ;
+						pontos[indicePoligono][1]= y ;	
+						indicePoligono++;
+						poligono.desenharPoligonoFechado(indicePoligono ,pontos, gc, gui_menu.colorPicker.getValue(),gui_menu.sizeSpinner.getValue());
+					}
+				break;
+				case 6:
+					x = (int) event.getX();
+					y = (int) event.getY();
+					if(indicePoligono == 0) {
+						desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+					}
+					else {
+							desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+							pontos[indicePoligono][0] = x ;
+							pontos[indicePoligono][1]= y ;	
+							indicePoligono++;
+							poligono.desenharPoligonoAberto(indicePoligono ,pontos, gc, gui_menu.colorPicker.getValue(),gui_menu.sizeSpinner.getValue());
+					}
+				break;
+				
+				}
+				indicePoligono = 0;
+			}
 		});
+	
 
 		// cria e insere cena
 		Scene scene = new Scene(pane);
