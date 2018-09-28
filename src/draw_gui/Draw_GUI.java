@@ -3,6 +3,7 @@ package draw_gui;
 import draw_tools.Dot_Gr;
 import draw_tools.Draw_Circle;
 import draw_tools.Draw_Edge;
+import draw_tools.Draw_Rectangle;
 import draw_tools.Draw_Snowflake;
 import draw_tools.Draw_Triangle;
 import javafx.scene.Scene;
@@ -94,7 +95,21 @@ public class Draw_GUI {
 					indiceCirculo++;
 					indicePonto++;
 					break;
-					
+				case 3:
+					Draw_Rectangle retangulo = new Draw_Rectangle();
+					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());
+					if (indiceCirculo % 2 == 0) {
+						ponto2[0] = x;
+						ponto2[1] = y;
+						retangulo.desenharRetangulo(ponto1, ponto2, gc, gui_menu.colorPicker.getValue(),
+								gui_menu.sizeSpinner.getValue());
+					} else {
+						ponto1[0] = x;
+						ponto1[1] = y;
+					}
+					indiceCirculo++;
+					indicePonto++;
+					break;	
 				case 4:
 					Draw_Triangle triangulo = new Draw_Triangle();
 					desenharPonto(gc, x, y, gui_menu.sizeSpinner.getValue(), "", gui_menu.colorPicker.getValue());					
