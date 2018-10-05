@@ -41,6 +41,7 @@ public class Draw_GUI {
 	boolean fimElastico = true;
 	int x = 0, y = 0, xant = 0, yant = 0;
 	int[][] pontos = new int[20][20];
+	
 
 	public Draw_GUI(Stage stage) {
 
@@ -74,6 +75,7 @@ public class Draw_GUI {
 			int stop = 0;
 			Draw_Polygon poligono = new Draw_Polygon();
 
+			// Botao Esquerdo Mouse
 			if (event.getButton() == MouseButton.PRIMARY) {
 				x = (int) event.getX();
 				y = (int) event.getY();
@@ -116,6 +118,7 @@ public class Draw_GUI {
 						ponto1[0] = x;
 						ponto1[1] = y;
 					}
+					indiceCirculo++;
 					break;
 				case 4:
 					Draw_Triangle triangulo = new Draw_Triangle();
@@ -174,6 +177,8 @@ public class Draw_GUI {
 					break;
 				}
 			}
+
+			// Botao Direito Mouse
 			if (event.getButton() == MouseButton.SECONDARY) {
 				switch (gui_menu.tooloption) {
 				case 5:
@@ -215,12 +220,12 @@ public class Draw_GUI {
 			if (event.getButton() == MouseButton.PRIMARY) {
 				switch (gui_menu.tooloption) {
 				case 1:// edge
+					Draw_Edge linha = new Draw_Edge();
 					if (fimElastico == false) {
 						xant = x;
 						yant = y;
 						ponto2[0] = xant;
 						ponto2[1] = yant;
-						Draw_Edge linha = new Draw_Edge();
 						// "apaga" reta anterior
 						linha.desenharLinha(ponto1, ponto2, gctemp, Color.WHITE, gui_menu.sizeSpinner.getValue() * 2);
 					}
@@ -228,7 +233,6 @@ public class Draw_GUI {
 							gui_menu.colorPicker.getValue());
 					x = (int) event.getX();
 					y = (int) event.getY();
-					Draw_Edge linha = new Draw_Edge();
 					ponto2[0] = x;
 					ponto2[1] = y;
 					linha.desenharLinha(ponto1, ponto2, gctemp, gui_menu.colorPicker.getValue(),
@@ -304,7 +308,7 @@ public class Draw_GUI {
 		gc.setFill(color);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 	}
-	
+
 	private void copyCanvas() {
 		SnapshotParameters params = new SnapshotParameters();
 		params.setFill(Color.TRANSPARENT);
