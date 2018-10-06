@@ -1,12 +1,18 @@
 package draw_gui;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
-import javafx.geometry.Point2D;
+import draw_tools.Button_Factory;
+import draw_tools.Canvas_Tools;
+import draw_tools.Draw_Points;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -15,61 +21,80 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class Draw_GUI {
-	// Componente para desenho
+	// Componentes para desenho
 	Canvas canvas = new Canvas(720, 512);
-	// Componente para desenhar
 	GraphicsContext gc = canvas.getGraphicsContext2D();
+
+	// Propriedades desenho
+	int tool = 0; // tool selecionada para desenho
+	int toolc = 0; // tool canvas selecionada
+	int sizep = 4;
 	Color colorbg = Color.WHITE;
-	// Pontos
-	int x = 0, y = 0;
 	Color colorp = Color.GREEN;
 	Color colorselect = Color.RED;
-	LinkedList<Point2D> points = new LinkedList<>();
-	// Ferramentas
-	int tool = 0;
+
+	// Vetores
+	Vectors vector = new Vectors();
+	int x = 0, y = 0;
+	int[] ponto1 = new int[2];
+	int[] ponto2 = new int[2];
 
 	public Draw_GUI(Stage stage) {
-		// Painel para os componentes
+		// Componentes
 		BorderPane pane = new BorderPane();
-		// Menu box
 		HBox menuh = new HBox();
 		VBox menuv = new VBox();
-
-		// MenuH
-		Button select_draw = new Button();
-		select_draw.setText("select");
-		Button erase_draw = new Button();
-		erase_draw.setText("erase");
-		Button clear_canvas = new Button();
-		clear_canvas.setText("clear");
-		menuh.getChildren().addAll(select_draw, erase_draw, clear_canvas);
-
-		clear_canvas.setOnAction(event -> {
-			eraseCanvas(colorbg);
-		});
-
-		select_draw.setOnAction(event -> {
-			tool = 1;
-		});
-
-		erase_draw.setOnAction(event -> {
-			tool = 2;
-		});
-
-		// MenuV
-		Button point_tool = new Button();
-		point_tool.setText("\u2022");
-		point_tool.setMinWidth(50);
-		menuv.getChildren().addAll(point_tool);
-
-		point_tool.setOnAction(event -> {
-			tool = 0;
-		});
+		Button_Factory tools_buttons = new Button_Factory();
 
 		// Pane elements
 		pane.setTop(menuh);
 		pane.setLeft(menuv);
 		pane.setCenter(canvas);
+
+		// MenuH
+		LinkedList<Button> toolscanvas = tools_buttons.createButtons(Arrays.asList("selecionar", "deletar", "limpar"));
+		toolscanvas.forEach((btn) -> {
+			menuh.getChildren().add(btn); // adiciona botões no componente HBox
+		});
+
+		final Spinner<Integer> sizeSpinner = new Spinner<Integer>(); // especifica tamanho dos pontos
+		ColorPicker colorPicker = new ColorPicker(); // especifica cor dos pontos
+		sizeSpinner.setId("sizeSpinner");
+		SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 8, sizep);
+		sizeSpinner.setValueFactory(valueFactory);
+		colorPicker.setValue(colorp);
+		menuh.getChildren().addAll(sizeSpinner, colorPicker);
+
+		colorPicker.setOnAction(event -> {
+			colorp = colorPicker.getValue();
+		});
+
+		sizeSpinner.getEditor().textProperty().addListener(event -> {
+			sizep = sizeSpinner.getValue();
+		});
+		
+		toolscanvas.get(0).setOnAction(event -> {
+			toolc = 0; // selecionar
+		});
+
+		toolscanvas.get(1).setOnAction(event -> {
+			toolc = 1; // deletar
+		});
+
+		toolscanvas.get(2).setOnAction(event -> {
+			eraseAll(); // limpar
+		});
+
+		// MenuV
+		LinkedList<Button> toolsdrawing = tools_buttons
+				.createButtons(Arrays.asList("\u2022", "/", "O", "\u25B3", "\u25A1"));
+		toolsdrawing.forEach((btn) -> {
+			menuv.getChildren().add(btn); // adiciona botões no componente VBox
+		});
+
+		toolsdrawing.get(0).setOnAction(event -> {
+			tool = 0; // ponto
+		});
 
 		// Trata mouseMoved
 		canvas.setOnMouseMoved(event -> {
@@ -78,24 +103,67 @@ public class Draw_GUI {
 
 		// Trata mouse pressed
 		canvas.setOnMousePressed(event -> {
+			x = (int) event.getX();
+			y = (int) event.getY();
 			// Botao esquerdo mouse
 			if (event.getButton() == MouseButton.PRIMARY) {
 				switch (tool) {
+				// Ponto
 				case 0:
-					x = (int) event.getX();
-					y = (int) event.getY();
-					points.add(new Point2D(x, y));
-					render(colorp, 0);
+					addPoint();
 					break;
+				// Linha
+				/*
+				 * case 1: ponto1[0] = x; ponto1[1] = y; ponto2[0] = x + 20; ponto2[1] = y + 20;
+				 * Draw_Edge newline = new Draw_Edge();
+				 * vector.lines.add(newline.desenharLinha(ponto1, ponto2)); render(); break;
+				 */
+				}
+			}
+			// Botao direito mouse
+			if (event.getButton() == MouseButton.SECONDARY) {
+				switch (toolc) {
+				// Selecionar
+				case 0:
+					switch (tool) {
+					// Ponto
+					case 0:
+						selectPoint();
+						break;
+					}
+					/*
+					 * case 1: while ((found == 0) && (count < vector.lines.size())) { int countp =
+					 * 0; while ((found == 0) && (countp < vector.lines.get(count).size())) { if
+					 * (((int) vector.lines.get(count).get(countp).getX() <= x + 3 && (int)
+					 * vector.lines.get(count).get(countp).getX() >= x - 3) && ((int)
+					 * vector.lines.get(count).get(countp).getY() <= y + 3 && (int)
+					 * vector.lines.get(count).get(countp).getY() >= y - 3)) {
+					 * vector.lines.get(count).forEach((p) -> { gc.setFill(color);
+					 * gc.fillOval(p.getX() - (10 / 2), p.getY() - (10 / 2), 10, 10); });
+					 * 
+					 * found = 1; } countp++; } count++; } count++; break;
+					 */
+					break;
+				// Deletar
 				case 1:
-					x = (int) event.getX();
-					y = (int) event.getY();
-					selectDraw(x, y, colorselect);
-					break;
-				case 2:
-					x = (int) event.getX();
-					y = (int) event.getY();
-					eraseDraw(x, y, colorbg, colorp);
+					switch (tool) {
+					// Ponto
+					case 0:
+						erasePoint();
+						break;
+					/*
+					 * case 1: int countp = 0; while ((found == 0) && (countp <
+					 * vector.lines.get(count).size())) { if (((int)
+					 * vector.lines.get(count).get(countp).getX() <= x + 3 && (int)
+					 * vector.lines.get(count).get(countp).getX() >= x - 3) && ((int)
+					 * vector.lines.get(count).get(countp).getY() <= y + 3 && (int)
+					 * vector.lines.get(count).get(countp).getY() >= y - 3)) {
+					 * vector.lines.remove(vector.lines.get(count));
+					 * changeCanvasColor(colorbackground); render(colordraw, type); found = 1; }
+					 * countp++; } count++; break;
+					 */
+					}
+					renderAll(); // refaz os desenhos
 					break;
 				}
 			}
@@ -104,13 +172,13 @@ public class Draw_GUI {
 		// Cria e insere cena
 		Scene scene = new Scene(pane);
 
-		// style
+		// Style
 		scene.getStylesheets().add("myStyle.css");
 		pane.getStyleClass().add("paneclass");
 		menuh.getStyleClass().add("menutoolsh");
 		menuv.getStyleClass().add("menutoolsv");
 		menuv.setMinWidth(70);
-		changeCanvasColor(colorbg);
+		new Canvas_Tools().changeCanvasColor(canvas, gc, colorbg);
 
 		// Propriedades stage
 		stage.setTitle("CGPI - Draw App");
@@ -119,58 +187,23 @@ public class Draw_GUI {
 		stage.show();
 	}
 
-	private void changeCanvasColor(Color color) {
-		gc.setFill(color);
-		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+	private void addPoint() {
+		new Draw_Points().addPoint(gc, colorp, sizep, vector, x, y);
 	}
 
-	private void render(Color color, int type) {
-		switch (type) {
-		case 0:
-			points.forEach((p) -> {
-				gc.setFill(color);
-				gc.fillOval(p.getX() - (10 / 2), p.getY() - (10 / 2), 10, 10);
-			});
-			gc.setFill(color);
-			break;
-		}
+	private void erasePoint() {
+		new Draw_Points().erasePoint(gc, colorbg, sizep, vector, x, y);
 	}
 
-	private void eraseCanvas(Color color) {
-		points.forEach((p) -> {
-			gc.clearRect(p.getX() - (10 / 2), p.getY() - (10 / 2), 10, 10);
-		});
-		points.clear();
-		changeCanvasColor(color);
+	private void selectPoint() {
+		new Draw_Points().selectPoint(gc, colorselect, sizep, vector, x, y);
 	}
 
-	private void selectDraw(int x, int y, Color color) {
-		int found = 0;
-		int count = 0;
-		while ((found == 0) && (count < points.size())) {
-			if (((int) points.get(count).getX() <= x + 3 && (int) points.get(count).getX() >= x - 3)
-					&& ((int) points.get(count).getY() <= y + 3 && (int) points.get(count).getY() >= y - 3)) {
-				gc.setFill(color);
-				gc.fillOval(points.get(count).getX() - (10 / 2), points.get(count).getY() - (10 / 2), 10, 10);
-				found = 1;
-			}
-			count++;
-		}
+	private void renderAll() {
+		new Canvas_Tools().renderAll(canvas, colorbg, gc, colorp, vector);
 	}
 
-	private void eraseDraw(int x, int y, Color colorbackground, Color colordraw) {
-		int found = 0;
-		int count = 0;
-		while ((found == 0) && (count < points.size())) {
-			if (((int) points.get(count).getX() <= x + 3 && (int) points.get(count).getX() >= x - 3)
-					&& ((int) points.get(count).getY() <= y + 3 && (int) points.get(count).getY() >= y - 3)) {
-				gc.clearRect(points.get(count).getX() - (10 / 2), points.get(count).getY() - (10 / 2), 10, 10);
-				points.remove(points.get(count));
-				changeCanvasColor(colorbackground);
-				render(colordraw, 0);
-				found = 1;
-			}
-			count++;
-		}
+	private void eraseAll() {
+		new Canvas_Tools().eraseAll(canvas, gc, colorbg, vector);
 	}
 }

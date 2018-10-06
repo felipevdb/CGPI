@@ -1,21 +1,24 @@
 package draw_tools;
 
-import javafx.scene.canvas.GraphicsContext;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
-import javafx.scene.paint.Color;
-import sun.security.provider.certpath.Vertex;
+import javafx.geometry.Point2D;
 
 public class Draw_Edge {
 
-	public void desenharLinha(int[] ponto1, int[] ponto2, GraphicsContext gc, Color color, Integer size) {
-
+	public LinkedList<Point2D> desenharLinha(int[] ponto1, int[] ponto2) {
+		
+		LinkedList<Point2D> pontosLinhas = new LinkedList<>();
+		
+		
 		int dx = ponto2[0] - ponto1[0];
 		int dy = ponto2[1] - ponto1[1];
 		int inclinacao = 0;
 		if (dx < 0) // caso ponto final < ponto inicial
 		{
-			desenharLinha(ponto2, ponto1, gc, color, size);
-			return;
+			pontosLinhas = desenharLinha(ponto2, ponto1);
+			return pontosLinhas;
 		}
 		if (dy < 0)
 			inclinacao = -1;
@@ -29,8 +32,7 @@ public class Draw_Edge {
 		x1 = ponto1[0];
 		y1 = ponto1[1];
 
-		Dot_Gr ponto12 = new Dot_Gr(x1, y1, color, size);
-		ponto12.desenharPonto(gc);
+		pontosLinhas.add(new Point2D(x1, y1));
 
 		if (dx >= inclinacao * dy) { // m<=1
 			if (dy < 0) { // caso y2<y1
@@ -44,8 +46,7 @@ public class Draw_Edge {
 						d += 2 * dy;
 						x1++; // varia apenas no eixo x
 					}
-					Dot_Gr ponto13 = new Dot_Gr(x1, y1, color, size);
-					ponto13.desenharPonto(gc);
+					pontosLinhas.add(new Point2D(x1, y1));
 				}
 			} else { // caso y1<y2
 				d = 2 * dy - dx;
@@ -58,8 +59,7 @@ public class Draw_Edge {
 						x1++;
 						y1++;
 					}
-					Dot_Gr ponto14 = new Dot_Gr(x1, y1, color, size);
-					ponto14.desenharPonto(gc);
+					pontosLinhas.add(new Point2D(x1, y1));
 				}
 			}
 		} else { // |m|>1
@@ -74,8 +74,7 @@ public class Draw_Edge {
 						x1++;
 						y1--;
 					}
-					Dot_Gr ponto15 = new Dot_Gr(x1, y1, color, size);
-					ponto15.desenharPonto(gc);
+					pontosLinhas.add(new Point2D(x1, y1));
 				}
 			} else { // caso y1<y2
 				d = dy - 2 * dx;
@@ -88,13 +87,13 @@ public class Draw_Edge {
 						d += -2 * dx;
 						y1++; // varia apenas no eixo y
 					}
-					Dot_Gr ponto16 = new Dot_Gr(x1, y1, color, size);
-					ponto16.desenharPonto(gc);
+					pontosLinhas.add(new Point2D(x1, y1));
 				}
 			}
 		}
-		Dot_Gr ponto17 = new Dot_Gr(ponto2[0], ponto2[1], color, size);
-		ponto17.desenharPonto(gc);
+		pontosLinhas.add(new Point2D(ponto2[0], ponto2[1]));
+		
+		return pontosLinhas;
 	}
 
 }
