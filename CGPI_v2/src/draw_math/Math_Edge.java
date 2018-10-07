@@ -1,8 +1,6 @@
 package draw_math;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-
 import javafx.geometry.Point2D;
 
 public class Math_Edge {

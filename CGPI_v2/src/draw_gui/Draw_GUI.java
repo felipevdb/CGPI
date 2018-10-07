@@ -5,8 +5,6 @@ import java.util.LinkedList;
 
 import draw_tools.Draw_Util;
 import draw_tools.Draw_Points;
-import draw_vectors.Vector_Util;
-import draw_vectors.Vector_Point;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
