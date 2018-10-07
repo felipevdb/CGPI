@@ -6,6 +6,7 @@ import javafx.geometry.Point2D;
 
 public class Vector_Point implements Vector_Elements {
 	public LinkedList<Point2D> points = new LinkedList<>();
+	
 	public int x = -1, y = -1;
 
 	public void clearElement() {
