@@ -1,4 +1,4 @@
-package draw_tools;
+package draw_gui;
 
 import java.util.LinkedList;
 import java.util.List;

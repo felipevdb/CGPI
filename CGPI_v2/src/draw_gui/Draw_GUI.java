@@ -3,9 +3,10 @@ package draw_gui;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import draw_tools.Button_Factory;
-import draw_tools.Canvas_Tools;
+import draw_tools.Draw_Util;
 import draw_tools.Draw_Points;
+import draw_vectors.Vector_Util;
+import draw_vectors.Vector_Point;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,19 +23,19 @@ import javafx.stage.Stage;
 
 public class Draw_GUI {
 	// Componentes para desenho
-	Canvas canvas = new Canvas(720, 512);
-	GraphicsContext gc = canvas.getGraphicsContext2D();
+	public Canvas canvas = new Canvas(720, 512);
+	public Color colorbg = Color.WHITE;
+	public GraphicsContext gc = canvas.getGraphicsContext2D();
 
 	// Propriedades desenho
+	public Draw_Points points_graphics = new Draw_Points();
+	Draw_Util canvas_graphics = new Draw_Util();
 	int tool = 0; // tool selecionada para desenho
 	int toolc = 0; // tool canvas selecionada
-	int sizep = 4;
-	Color colorbg = Color.WHITE;
-	Color colorp = Color.GREEN;
-	Color colorselect = Color.RED;
 
 	// Vetores
-	Vectors vector = new Vectors();
+	int sizep = points_graphics.vector_tools.size_point;
+	Color colorp = points_graphics.vector_tools.color_point;
 	int x = 0, y = 0;
 	int[] ponto1 = new int[2];
 	int[] ponto2 = new int[2];
@@ -67,12 +68,14 @@ public class Draw_GUI {
 
 		colorPicker.setOnAction(event -> {
 			colorp = colorPicker.getValue();
+			points_graphics.vector_tools.color_point = colorp;
 		});
 
 		sizeSpinner.getEditor().textProperty().addListener(event -> {
 			sizep = sizeSpinner.getValue();
+			points_graphics.vector_tools.size_point = sizep;
 		});
-		
+
 		toolscanvas.get(0).setOnAction(event -> {
 			toolc = 0; // selecionar
 		});
@@ -178,7 +181,7 @@ public class Draw_GUI {
 		menuh.getStyleClass().add("menutoolsh");
 		menuv.getStyleClass().add("menutoolsv");
 		menuv.setMinWidth(70);
-		new Canvas_Tools().changeCanvasColor(canvas, gc, colorbg);
+		new Draw_Util().changeCanvasColor(canvas, gc, colorbg);
 
 		// Propriedades stage
 		stage.setTitle("CGPI - Draw App");
@@ -188,22 +191,22 @@ public class Draw_GUI {
 	}
 
 	private void addPoint() {
-		new Draw_Points().addPoint(gc, colorp, sizep, vector, x, y);
+		points_graphics.addElement(gc, x, y);
 	}
 
 	private void erasePoint() {
-		new Draw_Points().erasePoint(gc, colorbg, sizep, vector, x, y);
+		points_graphics.eraseElement(gc, colorbg, x, y);
 	}
 
 	private void selectPoint() {
-		new Draw_Points().selectPoint(gc, colorselect, sizep, vector, x, y);
+		points_graphics.selectElement(gc, x, y);
 	}
 
 	private void renderAll() {
-		new Canvas_Tools().renderAll(canvas, colorbg, gc, colorp, vector);
+		canvas_graphics.renderAll(this);
 	}
 
 	private void eraseAll() {
-		new Canvas_Tools().eraseAll(canvas, gc, colorbg, vector);
+		canvas_graphics.eraseAll(this);
 	}
 }
